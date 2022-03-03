@@ -1,10 +1,10 @@
 # Files
 .env
-/.__pycache__
+*/.__pycache__
 README.md
 
 # Folders
 assets
 .idea
-*./vscode
+*/.vscode
 venv
