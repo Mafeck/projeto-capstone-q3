@@ -1,5 +1,4 @@
 from flask import Flask
-
 from app.routes.api_blueprint import bp_api
 
 
