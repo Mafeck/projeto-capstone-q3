@@ -3,7 +3,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.configs.database import db
 
+from dataclasses import dataclass
 
+
+@dataclass
 class LawyerModel(db.Model):
     oab: str
     name: str
