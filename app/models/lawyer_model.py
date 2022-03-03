@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String
-from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import relationship
 
 from app.configs.database import db
 
 from dataclasses import dataclass
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 @dataclass
@@ -36,3 +37,7 @@ class LawyerModel(db.Model):
 
     def verify_password_hash(self, password_to_compare):
         return check_password_hash(self.password_hash, password_to_compare)
+
+    lawyers_clients = relationship(
+        "ClientModel", secundary="lawyers_clients_table", backref="lawyers"
+    )

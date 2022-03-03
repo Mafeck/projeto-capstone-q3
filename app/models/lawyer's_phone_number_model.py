@@ -3,7 +3,10 @@ from sqlalchemy.orm import relationship, backref
 
 from app.configs.database import db
 
+from dataclasses import dataclass
 
+
+@dataclass
 class LawyersPhoneNumber(db.Model):
     id: int
     phone: str
