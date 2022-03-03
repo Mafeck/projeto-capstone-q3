@@ -5,7 +5,7 @@ README.md
 
 # Folders
 assets
-.idea
+*.idea
 /venv
 **/__pycache__
 *pyc
