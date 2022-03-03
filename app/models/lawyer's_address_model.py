@@ -27,5 +27,5 @@ class LawyersAddressModel(db.Model):
     cep = Column(String(length=255), nullable=False)
 
     lawyers = relationship(
-        "LawyersModel", backref=backref("Lawyer's_address", uselist=False), uselist=False
+        "LawyerModel", backref=backref("Lawyer's_address", uselist=False), uselist=False
     )
