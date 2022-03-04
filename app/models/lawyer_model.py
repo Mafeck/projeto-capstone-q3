@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.configs.database import db
@@ -14,18 +14,17 @@ class LawyerModel(db.Model):
     last_name: str
     cpf: str
     email: str
-    password_hash: str
-    address_id: int
+    address_id: dict
 
-    __tablename__ = "lawyers"
+    __tablename__ = "Lawyers"
 
     oab = Column(String, nullable=False, unique=True)
     name = Column(String(length=255))
     last_name = Column(String(length=255))
     cpf = Column(String(length=11), nullable=False, unique=True)
-    email = Column(String(length=255), unique=True)
+    email = Column(String(length=255), nullable=False, unique=True)
     password_hash = Column(String(length=80), nullable=False)
-    address_id = Column(Integer)
+    address_id = Column(Integer, ForeignKey("Lawyer's_address.id"))
 
     @property
     def password(self):
@@ -39,5 +38,5 @@ class LawyerModel(db.Model):
         return check_password_hash(self.password_hash, password_to_compare)
 
     lawyers_clients = relationship(
-        "ClientModel", secundary="lawyers_clients_table", backref="lawyers"
+        "ClientModel", secundary="Lawyers_clients_table", backref="Lawyers"
     )

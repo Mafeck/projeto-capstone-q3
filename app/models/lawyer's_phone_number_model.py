@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 from app.configs.database import db
@@ -12,12 +12,12 @@ class LawyersPhoneNumber(db.Model):
     phone: str
     lawyer_id: int
 
-    __tablename__ = "lawyer's_phone_number"
+    __tablename__ = "Lawyer's_phone_number"
 
     id = Column(Integer, primary_key=True)
-    phone = Column(String(), nullable=False, unique=True)
-    lawyer_id = Column(Integer)
+    phone = Column(String, nullable=False, unique=True)
+    lawyer_id = Column(Integer, ForeignKey("Lawyers.id"))
 
     lawyers = relationship(
-        "LawyerModel", backref=backref("lawyer's_phone_number", uselist=True), uselist=False
+        "LawyerModel", backref=backref("Lawyer's_phone_number", uselist=True), uselist=False
     )
