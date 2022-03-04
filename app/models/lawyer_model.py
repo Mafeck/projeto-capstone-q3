@@ -38,5 +38,5 @@ class LawyerModel(db.Model):
         return check_password_hash(self.password_hash, password_to_compare)
 
     lawyers_clients = relationship(
-        "ClientModel", secundary="lawyers_clients_table", backref="lawyers"
+        "ClientModel", secundary="Lawyers_clients_table", backref="Lawyers"
     )
