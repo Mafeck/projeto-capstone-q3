@@ -2,8 +2,9 @@ from app.configs.database import db
 
 from sqlalchemy import Column, Integer, String, ForeignKey
 from dataclasses import dataclass
-from app.models.client_adress_model import ClientAddressModel
+from app.models.client_address_model import ClientAddressModel
 from sqlalchemy.orm import backref, relationship
+
 
 @dataclass
 class ClientModel(db.Model):
