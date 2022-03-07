@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship, backref
 
 from app.configs.database import db
 
@@ -25,7 +24,3 @@ class LawyersAddressModel(db.Model):
     state = Column(String(length=255), nullable=False)
     country = Column(String(length=255), nullable=False)
     cep = Column(String(length=255), nullable=False)
-
-    lawyers = relationship(
-        "LawyerModel", backref=backref("lawyer's_address", uselist=False), uselist=False
-    )

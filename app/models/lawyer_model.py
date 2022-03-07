@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.configs.database import db
+from app.models.lawyers_address_model import LawyersAddressModel
 
 from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,17 +15,18 @@ class LawyerModel(db.Model):
     last_name: str
     cpf: str
     email: str
-    address_id: dict
+    address_id: int
+    address: LawyersAddressModel
 
-    __tablename__ = "Lawyers"
+    __tablename__ = "lawyers"
 
-    oab = Column(String, nullable=False, unique=True)
-    name = Column(String(length=255))
-    last_name = Column(String(length=255))
-    cpf = Column(String(length=11), nullable=False, unique=True)
+    oab = Column(String, primary_key=True)
+    name = Column(String(length=255), nullable=False)
+    last_name = Column(String(length=255), nullable=False)
+    cpf = Column(String(length=14), nullable=False, unique=True)
     email = Column(String(length=255), nullable=False, unique=True)
     password_hash = Column(String(length=80), nullable=False)
-    address_id = Column(Integer, ForeignKey("Lawyer's_address.id"))
+    address_id = Column(Integer, ForeignKey("lawyer's_address.id"), nullable=False, unique=True)
 
     @property
     def password(self):
@@ -38,5 +40,9 @@ class LawyerModel(db.Model):
         return check_password_hash(self.password_hash, password_to_compare)
 
     lawyers_clients = relationship(
-        "ClientModel", secundary="Lawyers_clients_table", backref="Lawyers"
+        "ClientModel", secondary="lawyers_clients_table", backref="lawyers"
+    )
+
+    address = relationship(
+        "LawyersAddressModel", backref("lawyers", uselist=False), uselist=False
     )

@@ -13,3 +13,11 @@ def init_app(app: Flask):
 
     db.init_app(app)
     app.db = db
+
+    from app.models.lawyer_model import LawyerModel
+    from app.models.lawyers_address_model import LawyersAddressModel
+    from app.models.lawyers_phone_number_model import LawyersPhoneNumber
+    from app.models.client_model import ClientModel
+    from app.models.client_address_model import ClientAddressModel
+    from app.models.clients_phone_number_model import ClientsPhoneModel
+    from app.models.lawyers_clients_table import lawyers_clients_table
