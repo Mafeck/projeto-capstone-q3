@@ -16,7 +16,7 @@ class LawyersAddressModel(db.Model):
     country: str
     cep: str
 
-    __tablename__ = "Lawyer's_address"
+    __tablename__ = "lawyer's_address"
 
     id = Column(Integer, primary_key=True)
     street = Column(String(length=255), nullable=False)
@@ -27,5 +27,5 @@ class LawyersAddressModel(db.Model):
     cep = Column(String(length=255), nullable=False)
 
     lawyers = relationship(
-        "LawyerModel", backref=backref("Lawyer's_address", uselist=False), uselist=False
+        "LawyerModel", backref=backref("lawyer's_address", uselist=False), uselist=False
     )
