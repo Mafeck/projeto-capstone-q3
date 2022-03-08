@@ -31,32 +31,33 @@ def create_user():
         country = address['country']
         cep = address['cep']
 
-        phone_number = data["phone_number"]
-        phone = phone_number["phone"]
+        # phone_number = data["phone_number"]
+        # phone = phone_number["phone"]
 
         address_to_create = data.pop("address")
-        phone_number_to_create = data.pop("phone_number")
+        # phone_number_to_create = data.pop("phone_number")
         password_to_hash = data.pop("password")
 
-        phone_number_to_create["lawyer_oab"] = oab
-
         address = LawyersAddressModel(**address_to_create)
-        phone_number = LawyersPhoneNumber(**phone_number_to_create)
 
         db.session.add(address)
-        db.session.add(phone_number)
 
         data["address_id"] = address.id
 
         lawyer = LawyerModel(**data)
-        
+
         lawyer.password = password_to_hash
-        print(lawyer.address_id)
-        address = LawyersAddressModel.query.get(lawyer.address_id)
 
         db.session.add(lawyer)
-
         db.session.commit()
+
+        # phone_number_to_create["lawyer_oab"] = oab
+
+        # phone_number = LawyersPhoneNumber(**phone_number_to_create)
+
+        # lawyer["address_id"] = address.id
+
+        # db.session.add(phone_number)
 
         return jsonify({
             "oab": lawyer.oab,
@@ -64,7 +65,7 @@ def create_user():
             "last_name": lawyer.last_name,
             "email": lawyer.email,
             "address": address,
-            "phone_number": phone_number
+            # "phone_number": phone_number
         }), HTTPStatus.CREATED
 
     except KeyError as e:
@@ -75,8 +76,8 @@ def create_user():
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
     # except oab_name_last_name_exception.OabNameLastNameException as e:
     #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
-    except IntegrityError:
-        return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
+    # except IntegrityError:
+    #     return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
 
 def login_user():
@@ -90,7 +91,7 @@ def login_user():
 
         if not lawyer or not lawyer.verify_password_hash(password):
             return {"error": "email or password not found"}, HTTPStatus.NOT_FOUND
-        
+
         token = create_access_token(lawyer)
 
         return jsonify({"access_token": token}), HTTPStatus.OK
