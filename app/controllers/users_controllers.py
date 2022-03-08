@@ -113,8 +113,8 @@ def create_user():
     except lawyer_exception.CpfFormatException as e:
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
 
-    # except oab_name_last_name_exception.OabNameLastNameException as e:
-    #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
+    except lawyer_exception.OabNameLastNameException as e:
+        return {"error": str(e)}, HTTPStatus.BAD_REQUEST
 
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
@@ -178,20 +178,17 @@ def remove_user():
 
     user_to_delete = LawyerModel.query.filter_by(email=logged_user["email"]).first()
     phone_to_delete = LawyersPhoneNumber.query.filter_by(lawyer_oab=logged_user['oab']).all()
-    #address_to_delete = LawyersAddressModel.query.filter_by(id=user_to_delete.address_id).first()
-    print(user_to_delete)
+    address_to_delete = LawyersAddressModel.query.filter_by(id=user_to_delete.address_id).first()
    
     for phone in phone_to_delete:
-
         db.session.delete(phone)    
         db.session.commit()
 
     db.session.delete(user_to_delete)
     db.session.commit()
 
-    #db.session.delete(address_to_delete)
-    #db.session.commit()
+    db.session.delete(address_to_delete)
+    db.session.commit()
 
-   
     return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK
 

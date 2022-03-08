@@ -19,6 +19,7 @@ class LawyerModel(db.Model):
     last_name: str
     cpf: str
     email: str
+    address_id: int
     address: LawyersAddressModel
 
     __tablename__ = "lawyers"
