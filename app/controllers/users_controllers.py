@@ -31,16 +31,34 @@ def create_user():
         country = address['country']
         cep = address['cep']
 
-        # phone_number = data["phone_number"]
-        # phone = phone_number["phone"]
+        phone_number = data["phone_number"]
+        phone = phone_number["phone"]
 
         address_to_create = data.pop("address")
-        # phone_number_to_create = data.pop("phone_number")
+        phone_number_to_create = data.pop("phone_number")
         password_to_hash = data.pop("password")
+
+        all_address = LawyersAddressModel.query.all()
+
+        list_address = [
+            {
+                "street": address.street,
+                "number": address.number,
+                "district": address.district,
+                "state": address.state,
+                "country": address.country,
+                "cep": address.cep
+            } for address in all_address
+        ]
+
+        for address in list_address:
+            if address == address_to_create:
+                return jsonify({"error": "Address already exists!"}), HTTPStatus.CONFLICT
 
         address = LawyersAddressModel(**address_to_create)
 
         db.session.add(address)
+        db.session.commit()
 
         data["address_id"] = address.id
 
@@ -51,13 +69,12 @@ def create_user():
         db.session.add(lawyer)
         db.session.commit()
 
-        # phone_number_to_create["lawyer_oab"] = oab
+        phone_number_to_create["lawyer_oab"] = oab
 
-        # phone_number = LawyersPhoneNumber(**phone_number_to_create)
+        phone_number = LawyersPhoneNumber(**phone_number_to_create)
 
-        # lawyer["address_id"] = address.id
-
-        # db.session.add(phone_number)
+        db.session.add(phone_number)
+        db.session.commit()
 
         return jsonify({
             "oab": lawyer.oab,
@@ -65,7 +82,7 @@ def create_user():
             "last_name": lawyer.last_name,
             "email": lawyer.email,
             "address": address,
-            # "phone_number": phone_number
+            "phone_number": phone_number.phone
         }), HTTPStatus.CREATED
 
     except KeyError as e:
@@ -76,8 +93,8 @@ def create_user():
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
     # except oab_name_last_name_exception.OabNameLastNameException as e:
     #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
-    # except IntegrityError:
-    #     return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
+    except IntegrityError:
+        return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
 
 def login_user():
