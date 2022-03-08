@@ -4,10 +4,10 @@ from flask import request, jsonify
 from osirisvalidator.exceptions import ValidationException
 
 from app.configs.database import db
-from app.models.lawyer_model import LawyerModel
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.models.lawyers_phone_number_model import LawyersPhoneNumber
 from app.exc import lawyer_exception
+from app.models.lawyer_model import LawyerModel
+from app.models.lawyers_phone_number_model import LawyersPhoneNumber
 
 from http import HTTPStatus
 
@@ -34,7 +34,7 @@ def create_user():
         phone_number = data["phone_number"]
 
         address_to_create = data.pop("address")
-        phone_number_to_create = data.pop("phone_number")
+        phone_numbers_to_create = data.pop("phone_number")
         password_to_hash = data.pop("password")
 
         all_address = LawyersAddressModel.query.all()
@@ -50,34 +50,44 @@ def create_user():
             } for address in all_address
         ]
 
-        for address in list_address:
-            if address == address_to_create:
-                return jsonify({"error": "Address already exists!"}), HTTPStatus.CONFLICT
+        if address_to_create not in list_address:
+            address = LawyersAddressModel(**address_to_create)
 
-        address = LawyersAddressModel(**address_to_create)
+            db.session.add(address)
+            db.session.commit()
 
-        db.session.add(address)
-        db.session.commit()
+            data["address_id"] = address.id
 
-        data["address_id"] = address.id
+        else:
+            address = LawyersAddressModel.query.filter_by(
+                street=address["street"],
+                number=address["number"],
+                state=address["state"],
+                district=address["district"],
+                country=address["country"],
+                cep=address["cep"]
+            ).first()
+
+            data["address_id"] = address.id
 
         lawyer = LawyerModel(**data)
 
         lawyer.password = password_to_hash
 
         db.session.add(lawyer)
-        db.session.commit()
 
         all_phone_number = LawyersPhoneNumber.query.all()
 
         phone_number_list = [phone_number.phone for phone_number in all_phone_number]
 
-        for phone in phone_number_to_create:
-            print(phone in phone_number_list)
+        for phone in phone_numbers_to_create:
             if phone not in phone_number_list:
                 phone_number = LawyersPhoneNumber(phone=phone, lawyer_oab=oab)
 
                 db.session.add(phone_number)
+
+            else:
+                return jsonify({"message": "Phone number already exists"}), HTTPStatus.CONFLICT
 
         db.session.commit()
 
@@ -90,18 +100,22 @@ def create_user():
             "phone_number": [
                 {
                     "phone": phone_number
-                } for phone_number in phone_number_to_create
+                } for phone_number in phone_numbers_to_create
             ]
         }), HTTPStatus.CREATED
 
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
+
     except ValidationException:
         return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST
+
     except lawyer_exception.CpfFormatException as e:
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
+
     # except oab_name_last_name_exception.OabNameLastNameException as e:
     #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
+
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
@@ -116,12 +130,14 @@ def login_user():
         lawyer: LawyerModel = LawyerModel.query.filter_by(email=email).first()
 
         if not lawyer or not lawyer.verify_password_hash(password):
-            return {"error": "email or password not found"}, HTTPStatus.NOT_FOUND
+            return {"error": "email or password not match"}, HTTPStatus.BAD_REQUEST
 
-        token = create_access_token(lawyer)
+        token = create_access_token(identity=lawyer)
 
         return jsonify({"access_token": token}), HTTPStatus.OK
+
     except KeyError as e:
         return {"error": f"Key {e} is missing"}, HTTPStatus.BAD_REQUEST
+
     except ValidationException:
         return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST

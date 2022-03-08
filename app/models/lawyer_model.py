@@ -8,10 +8,17 @@ from app.models.lawyers_address_model import LawyersAddressModel
 from app.exc import lawyer_exception
 
 import re
+from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+@dataclass
 class LawyerModel(db.Model):
+    oab: str
+    name: str
+    last_name: str
+    cpf: str
+    email: str
     address: LawyersAddressModel
 
     __tablename__ = "lawyers"
@@ -22,7 +29,7 @@ class LawyerModel(db.Model):
     cpf = Column(String(length=14), nullable=False, unique=True)
     email = Column(String(length=255), nullable=False, unique=True)
     password_hash = Column(String(length=255), nullable=False)
-    address_id = Column(Integer, ForeignKey("lawyers_address.id"), unique=True)
+    address_id = Column(Integer, ForeignKey("lawyers_address.id"), nullable=False)
 
     lawyers_clients = relationship(
         "LawyerModel", secondary="lawyers_clients_table", backref="lawyers"

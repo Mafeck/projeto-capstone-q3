@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 @dataclass
 class LawyersAddressModel(db.Model):
-    id: int
     street: str
     number: int
     district: str
