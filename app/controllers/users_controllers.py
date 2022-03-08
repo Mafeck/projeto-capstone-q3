@@ -32,7 +32,6 @@ def create_user():
         cep = address['cep']
 
         phone_number = data["phone_number"]
-        phone = phone_number["phone"]
 
         address_to_create = data.pop("address")
         phone_number_to_create = data.pop("phone_number")
@@ -69,11 +68,17 @@ def create_user():
         db.session.add(lawyer)
         db.session.commit()
 
-        phone_number_to_create["lawyer_oab"] = oab
+        all_phone_number = LawyersPhoneNumber.query.all()
 
-        phone_number = LawyersPhoneNumber(**phone_number_to_create)
+        phone_number_list = [phone_number.phone for phone_number in all_phone_number]
 
-        db.session.add(phone_number)
+        for phone in phone_number_to_create:
+            print(phone in phone_number_list)
+            if phone not in phone_number_list:
+                phone_number = LawyersPhoneNumber(phone=phone, lawyer_oab=oab)
+
+                db.session.add(phone_number)
+
         db.session.commit()
 
         return jsonify({
@@ -82,7 +87,11 @@ def create_user():
             "last_name": lawyer.last_name,
             "email": lawyer.email,
             "address": address,
-            "phone_number": phone_number.phone
+            "phone_number": [
+                {
+                    "phone": phone_number
+                } for phone_number in phone_number_to_create
+            ]
         }), HTTPStatus.CREATED
 
     except KeyError as e:
