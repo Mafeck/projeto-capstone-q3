@@ -8,16 +8,15 @@ from dataclasses import dataclass
 
 @dataclass
 class LawyersPhoneNumber(db.Model):
-    id: int
     phone: str
-    lawyer_id: int
+    lawyer_oab: str
 
-    __tablename__ = "lawyer's_phone_number"
+    __tablename__ = "lawyers_phone_number"
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, nullable=False, unique=True)
-    lawyer_id = Column(Integer, ForeignKey("lawyers.id"))
+    lawyer_oab = Column(String, ForeignKey("lawyers.oab", ondelete='CASCADE'), nullable=False)
 
     lawyers = relationship(
-        "LawyerModel", backref=backref("lawyer's_phone_number", uselist=True), uselist=False
+        "LawyerModel", backref=backref("lawyers_phone_number", uselist=True), uselist=False
     )
