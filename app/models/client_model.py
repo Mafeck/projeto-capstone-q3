@@ -18,7 +18,7 @@ class ClientModel(db.Model):
     email = Column(String(length=150), unique=True, nullable=False)
     password_hash = Column(String(length=255))
     marital_status = Column(String(length=20), nullable=False)
-    address_id = Column(Integer, ForeignKey("client_address.id"), nullable=False, unique=True)
+    address_id = Column(Integer, ForeignKey("client_address.id"), nullable=False)
 
     address = relationship(
         "ClientAddressModel", backref=backref("address", uselist=False), uselist=False
