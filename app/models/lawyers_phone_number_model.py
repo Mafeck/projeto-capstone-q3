@@ -15,7 +15,7 @@ class LawyersPhoneNumber(db.Model):
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, nullable=False, unique=True)
-    lawyer_oab = Column(String, ForeignKey("lawyers.oab", ondelete='CASCADE'), nullable=False)
+    lawyer_oab = Column(String, ForeignKey("lawyers.oab"), nullable=False)
 
     lawyers = relationship(
         "LawyerModel", backref=backref("lawyers_phone_number", uselist=True), uselist=False

@@ -17,8 +17,8 @@ class ClientsPhoneModel(db.Model):
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, nullable=False, unique=True)
-    client_cpf = Column(String, ForeignKey("clients.cpf", ondelete='CASCADE'), nullable=False)
+    client_cpf = Column(String, ForeignKey("clients.cpf"), nullable=False)
 
     client = relationship(
-        "ClientModel", backref=backref("clients", passive_deletes=True, uselist=False)
+        "ClientModel", backref=backref("clients", uselist=False)
     )

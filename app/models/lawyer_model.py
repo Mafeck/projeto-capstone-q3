@@ -29,14 +29,14 @@ class LawyerModel(db.Model):
     cpf = Column(String(length=14), nullable=False, unique=True)
     email = Column(String(length=255), nullable=False, unique=True)
     password_hash = Column(String(length=255), nullable=False)
-    address_id = Column(Integer, ForeignKey("lawyers_address.id", ondelete='CASCADE'), nullable=False)
+    address_id = Column(Integer, ForeignKey("lawyers_address.id"), nullable=False)
 
     lawyers_clients = relationship(
-        "LawyerModel", secondary="lawyers_clients_table", passive_deletes=True, backref="lawyers"
+        "LawyerModel", secondary="lawyers_clients_table", backref="lawyers"
     )
 
     address = relationship(
-        "LawyersAddressModel", backref=backref("lawyers", passive_deletes=True, uselist=False), uselist=False
+        "LawyersAddressModel", backref=backref("lawyers", uselist=False), uselist=False
     )
 
     @property

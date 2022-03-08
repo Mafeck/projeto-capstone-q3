@@ -175,12 +175,23 @@ def get_user():
 @jwt_required()
 def remove_user():
     logged_user = get_jwt_identity()
-    # print(logged_user)
-    user_to_delete = LawyerModel.query.filter_by(email=logged_user["email"]).first()
 
-    name = user_to_delete.name
+    user_to_delete = LawyerModel.query.filter_by(email=logged_user["email"]).first()
+    phone_to_delete = LawyersPhoneNumber.query.filter_by(lawyer_oab=logged_user['oab']).all()
+    #address_to_delete = LawyersAddressModel.query.filter_by(id=user_to_delete.address_id).first()
+    print(user_to_delete)
+   
+    for phone in phone_to_delete:
+
+        db.session.delete(phone)    
+        db.session.commit()
 
     db.session.delete(user_to_delete)
     db.session.commit()
-    # return ''
-    return {"message": f"User {name} has been deleted"}, HTTPStatus.OK
+
+    #db.session.delete(address_to_delete)
+    #db.session.commit()
+
+   
+    return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK
+
