@@ -1,9 +1,13 @@
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, relationship, validates
 from sqlalchemy import Column, Integer, String, ForeignKey
+from osirisvalidator.string import not_blank
+from osirisvalidator.internet import valid_email
 
 from app.configs.database import db
 from app.models.client_address_model import ClientAddressModel
+from app.exc import exceptions
 
+import re
 from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -24,7 +28,6 @@ class ClientModel(db.Model):
     name = Column(String(length=150), nullable=False)
     last_name = Column(String(length=150), nullable=False)
     email = Column(String(length=150), unique=True, nullable=False)
-    password_hash = Column(String(length=255))
     marital_status = Column(String(length=20), nullable=False)
     address_id = Column(Integer, ForeignKey("client_address.id"), nullable=False)
 
@@ -32,13 +35,26 @@ class ClientModel(db.Model):
         "ClientAddressModel", backref=backref("clients", uselist=False), uselist=False
     )
 
-    @property
-    def password(self):
-        raise AttributeError("Inaccessible password!")
+    @validates('email')
+    @not_blank(field='email')
+    @valid_email(field='email')
+    def validate_email(self, _, email):
+        return email
 
-    @password.setter
-    def password(self, password_to_hash):
-        self.password_hash = generate_password_hash(password_to_hash)
+    @validates('cpf')
+    def validate_cpf(self, _, cpf):
+        pattern = "(^\d{3}\.\d{3}\.\d{3}\-\d{2}$)"
 
-    def verify_password_hash(self, password_to_compare):
-        return check_password_hash(self.password_hash, password_to_compare)
+        if not re.search(pattern, cpf):
+            raise exceptions.CpfFormatException(
+                "CPF format is not valid. CPF must be like xxx.xxx.xxx-xx"
+            )
+        return cpf
+
+    @validates('name', 'last_name', 'marital_status')
+    def validate_name_last_name_marital_status(self, key, value):
+        if type(value) != str:
+            raise exceptions.TypeException(
+                "'name','last_name' and 'marital_status' must be a string type."
+            )
+        return value

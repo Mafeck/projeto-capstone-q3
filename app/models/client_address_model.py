@@ -21,4 +21,4 @@ class ClientAddressModel(db.Model):
     district = Column(String, nullable=False)
     state = Column(String, nullable=False)
     country = Column(String, nullable=False)
-    cep = Column(String, nullable=False, unique=True)
+    cep = Column(String, nullable=False)

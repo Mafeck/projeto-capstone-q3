@@ -20,5 +20,5 @@ class ClientsPhoneModel(db.Model):
     client_cpf = Column(String, ForeignKey("clients.cpf"), nullable=False)
 
     client = relationship(
-        "ClientModel", backref=backref("clients_phone_number", uselist=False)
+        "ClientModel", backref=backref("clients_phone_number", uselist=True), uselist=False
     )

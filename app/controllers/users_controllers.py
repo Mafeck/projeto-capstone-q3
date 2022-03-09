@@ -5,7 +5,7 @@ from osirisvalidator.exceptions import ValidationException
 
 from app.configs.database import db
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.exc import lawyer_exception
+from app.exc import exceptions
 from app.models.lawyer_model import LawyerModel
 from app.models.lawyers_phone_number_model import LawyersPhoneNumber
 
@@ -110,10 +110,10 @@ def create_user():
     except ValidationException:
         return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST
 
-    except lawyer_exception.CpfFormatException as e:
+    except exceptions.CpfFormatException as e:
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
 
-    except lawyer_exception.OabNameLastNameException as e:
+    except exceptions.OabNameLastNameException as e:
         return {"error": str(e)}, HTTPStatus.BAD_REQUEST
 
     except IntegrityError:
