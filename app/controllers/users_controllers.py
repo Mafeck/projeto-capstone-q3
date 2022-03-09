@@ -191,4 +191,3 @@ def remove_user():
     db.session.commit()
 
     return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK
-

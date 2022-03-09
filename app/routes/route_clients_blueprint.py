@@ -1,7 +1,11 @@
 from flask import Blueprint
 
+from app.controllers import clients_controller
+from app.routes.processes_blueprint import bp_processes
+
 
 bp_clients = Blueprint("clients", __name__, url_prefix="/clients")
+bp_clients.register_blueprint(bp_processes)
 
 # bp_clients.get("")()
 # bp_clients.get("/<int:client_id>")()
@@ -13,8 +17,3 @@ bp_clients = Blueprint("clients", __name__, url_prefix="/clients")
 # bp_clients.patch("/<int:client_id>/comments")()
 # bp_clients.delete("/<int:client_id>")()
 # bp_clients.delete("/<int:client_id>/comments")()
-# bp_clients.post("/process")()
-# bp_clients.patch("/<int:process_id>")()
-# bp_clients.get("/<int:process_id>")()
-# bp_clients.get("/process")()
-# bp_clients.delete("/<int:process_id>")()
