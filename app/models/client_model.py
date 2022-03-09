@@ -4,9 +4,18 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from app.configs.database import db
 from app.models.client_address_model import ClientAddressModel
 
+from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+@dataclass
 class ClientModel(db.Model):
+    cpf: str
+    name: str
+    last_name: str
+    email: str
+    marital_status: str
+    address_id: int
     address: ClientAddressModel
 
     __tablename__ = "clients"
