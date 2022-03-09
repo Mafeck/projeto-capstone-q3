@@ -18,5 +18,3 @@ bp_clients = Blueprint("clients", __name__, url_prefix="/clients")
 # bp_clients.get("/<int:process_id>")()
 # bp_clients.get("/process")()
 # bp_clients.delete("/<int:process_id>")()
-
-

@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 @dataclass
 class ClientAddressModel(db.Model):
-    id: int
     street: str
     number: str
     district: str

@@ -1,22 +1,12 @@
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy import Column, Integer, String, ForeignKey
+
+from app.configs.database import db
+from app.models.client_address_model import ClientAddressModel
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app.models.client_address_model import ClientAddressModel
-from app.configs.database import db
-
-from dataclasses import dataclass
-
-
-@dataclass
 class ClientModel(db.Model):
-    cpf: str
-    name: str
-    last_name: str
-    email: str
-    password_hash: str
-    marital_status: str
-    address_id: int
     address: ClientAddressModel
 
     __tablename__ = "clients"
@@ -24,10 +14,14 @@ class ClientModel(db.Model):
     cpf = Column(String(length=14), primary_key=True)
     name = Column(String(length=150), nullable=False)
     last_name = Column(String(length=150), nullable=False)
-    email = Column(String(length=150), unique=True)
-    password_hash = Column(String(length=80))
-    marital_status = Column(String(length=20))
-    address_id = Column(Integer, ForeignKey("client_address.id"), unique=True)
+    email = Column(String(length=150), unique=True, nullable=False)
+    password_hash = Column(String(length=255))
+    marital_status = Column(String(length=20), nullable=False)
+    address_id = Column(Integer, ForeignKey("client_address.id"), nullable=False)
+
+    address = relationship(
+        "ClientAddressModel", backref=backref("clients", uselist=False), uselist=False
+    )
 
     @property
     def password(self):
@@ -39,7 +33,3 @@ class ClientModel(db.Model):
 
     def verify_password_hash(self, password_to_compare):
         return check_password_hash(self.password_hash, password_to_compare)
-
-    address = relationship(
-        "ClientAddressModel", backref=backref("clients", uselist=False), uselist=False
-    )

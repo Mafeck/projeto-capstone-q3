@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 @dataclass
 class LawyersAddressModel(db.Model):
-    id: int
     street: str
     number: int
     district: str
@@ -15,11 +14,11 @@ class LawyersAddressModel(db.Model):
     country: str
     cep: str
 
-    __tablename__ = "lawyer's_address"
+    __tablename__ = "lawyers_address"
 
     id = Column(Integer, primary_key=True)
     street = Column(String(length=255), nullable=False)
-    number = Column(String(length=10))
+    number = Column(String(length=10), nullable=False)
     district = Column(String(length=255), nullable=False)
     state = Column(String(length=255), nullable=False)
     country = Column(String(length=255), nullable=False)
