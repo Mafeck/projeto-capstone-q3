@@ -1,12 +1,10 @@
 from flask import Blueprint
 from app.controllers.comments_controllers import create_comments, update_comments, get_all_comments, get_comment_by_cpf, remove_comment
 
-from app.controllers import user_clients_controller
-from app.routes.processes_blueprint import bp_processes
+from app.controllers import processes_controllers, user_clients_controller
 
 
 bp_clients = Blueprint("clients", __name__, url_prefix="/clients")
-bp_clients.register_blueprint(bp_processes)
 
 bp_clients.get("/<cpf>")(user_clients_controller.get_client)
 bp_clients.get("")(user_clients_controller.get_all_clients)
@@ -23,3 +21,10 @@ bp_clients.patch("/<cpf>")(user_clients_controller.update_client)
 bp_clients.patch("/comments/<comment_id>")(update_comments)
 # bp_clients.delete("/<int:client_id>")()
 bp_clients.delete("/comments/<comment_id>")(remove_comment)
+
+# bp_processes.post("/process")()
+# bp_processes.patch("/<int:process_id>")()
+# bp_processes.get("/<int:process_id>")()
+# bp_processes.get("/process")()
+# bp_processes.delete("/<int:process_id>")()
+bp_clients.post("/processes")(processes_controllers.create_process)

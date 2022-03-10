@@ -9,7 +9,7 @@ from app.models.processes_model import ProcessesModel
 from http import HTTPStatus
 
 
-def create_proccess():
+def create_process():
     data = request.get_json()
 
     try:
@@ -18,41 +18,33 @@ def create_proccess():
         all_proccess = ProcessesModel.query.all()
 
 
-        if process_number not in all_proccess:
-            proccess = ProcessesModel(**process_number)
+        # if process_number not in all_proccess:
+        #     proccess = ProcessesModel(process_number)
 
-            db.session.add(proccess)
-            db.session.commit()
+        # db.session.add(proccess)
+        # db.session.commit()
 
-            data["id"] = proccess.id
+        # data["id"] = proccess.id
 
-        else:
-            proccess = LawyersAddressModel.query.filter_by(
-                number=proccess["number"]
-            ).first()
+        # db.session.add(data)
 
-            data["id"] = proccess.id
+        # db.session.commit()
 
-
-        db.session.add(data)
-
-        db.session.commit()
-
-        return jsonify({
+        return jsonify({"msg":
             data
         }), HTTPStatus.CREATED
 
-    # except KeyError as e:
-    #     return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
-
-    # except ValidationException:
-    #     return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST
-
-    # except lawyer_exception.CpfFormatException as e:
-    #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
-
-    # except lawyer_exception.OabNameLastNameException as e:
-    #     return {"error": str(e)}, HTTPStatus.BAD_REQUEST
+    except KeyError as e:
+        return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
+
+# @jwt_required()
+# def get_process():
+#     process = ProcessesModel.query.filter_by().first()
+
+#     if not process:
+#         return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
+
+#     return jsonify(process), HTTPStatus.OK
