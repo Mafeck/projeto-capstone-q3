@@ -61,14 +61,13 @@ def create_comments():
 
 
 #@jwt_required()
-def update_comments(id): #não dá pra atualizar pelo cpf porque o cliente pode ter vários comentários. Vai ter que ser pelo id do comentário mesmo
+def update_comments(comment_id): #não dá pra atualizar pelo cpf porque o cliente pode ter vários comentários. Vai ter que ser pelo id do comentário mesmo
     comment_data = request.get_json()
 
     try:
         comment = comment_data['comment']
-        #comment = ClientModel.query.filter_by(cpf=cpf).first()
-        #found = clients_comments_table.query.filter_by(client_cpf=cpf)
-        comment_to_update = ClientCommentsModel.query.filter_by(id=id).first()
+        
+        comment_to_update = ClientCommentsModel.query.filter_by(id=comment_id).first()
         if not comment_to_update:
             return jsonify({"message": "Comment not found"}), HTTPStatus.NOT_FOUND
 
@@ -84,19 +83,23 @@ def update_comments(id): #não dá pra atualizar pelo cpf porque o cliente pode 
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
-        
-"""
+
 #@jwt_required()
-def get_comments():
+def get_all_comments():
+    comments = ClientCommentsModel.query.all()
+
+    return jsonify(comments), HTTPStatus.OK
+
+#@jwt_required()
+def get_comment_by_cpf(cpf):
     client = ClientModel.query.filter_by(cpf=cpf).first()
 
     if not client:
         return {"error": "Client not found"}, HTTPStatus.NOT_FOUND
 
-    return jsonify(client), HTTPStatus.OK
+    return jsonify(client.comments), HTTPStatus.OK
 
-
-
+"""
 #@jwt_required()
 def remove_comments():
     logged_user = get_jwt_identity()
