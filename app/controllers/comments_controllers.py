@@ -90,6 +90,7 @@ def get_all_comments():
 
     return jsonify(comments), HTTPStatus.OK
 
+
 #@jwt_required()
 def get_comment_by_cpf(cpf):
     client = ClientModel.query.filter_by(cpf=cpf).first()
@@ -99,25 +100,14 @@ def get_comment_by_cpf(cpf):
 
     return jsonify(client.comments), HTTPStatus.OK
 
-"""
-#@jwt_required()
-def remove_comments():
+
+@jwt_required()
+def remove_comment(comment_id):
     logged_user = get_jwt_identity()
 
-    user_to_delete = LawyerModel.query.filter_by(email=logged_user["email"]).first()
-    phone_to_delete = LawyersPhoneNumber.query.filter_by(lawyer_oab=logged_user['oab']).all()
-    address_to_delete = LawyersAddressModel.query.filter_by(id=user_to_delete.address_id).first()
-   
-    for phone in phone_to_delete:
-        db.session.delete(phone)    
-        db.session.commit()
+    comment_to_delete = ClientCommentsModel.query.filter_by(id=comment_id).first()
 
-    db.session.delete(user_to_delete)
+    db.session.delete(comment_to_delete)
     db.session.commit()
 
-    db.session.delete(address_to_delete)
-    db.session.commit()
-
-    return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK
-
-"""
+    return {"message": f"Comment has been deleted"}, HTTPStatus.OK

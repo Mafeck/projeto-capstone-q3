@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.controllers.comments_controllers import create_comments, update_comments, get_all_comments, get_comment_by_cpf
+from app.controllers.comments_controllers import create_comments, update_comments, get_all_comments, get_comment_by_cpf, remove_comment
 
 from app.controllers import user_clients_controller
 from app.routes.processes_blueprint import bp_processes
@@ -23,4 +23,4 @@ bp_clients.post("/register")(user_clients_controller.create_client)
 bp_clients.patch("/<cpf>")(user_clients_controller.update_client)
 bp_clients.patch("/comments/<comment_id>")(update_comments)
 # bp_clients.delete("/<int:client_id>")()
-# bp_clients.delete("/<int:client_id>/comments")()
+bp_clients.delete("/comments/<comment_id>")(remove_comment)
