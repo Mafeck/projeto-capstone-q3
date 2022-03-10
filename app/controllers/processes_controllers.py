@@ -4,7 +4,7 @@ from flask import request, jsonify
 
 from app.configs.database import db
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.models.proccesses_model import ProcessesModel
+from app.models.processes_model import ProcessesModel
 
 from http import HTTPStatus
 
@@ -13,13 +13,13 @@ def create_proccess():
     data = request.get_json()
 
     try:
-        proccess_number = data['number']
+        process_number = data['number']
 
         all_proccess = ProcessesModel.query.all()
 
 
-        if proccess_number not in all_proccess:
-            proccess = ProcessesModel(**proccess_number)
+        if process_number not in all_proccess:
+            proccess = ProcessesModel(**process_number)
 
             db.session.add(proccess)
             db.session.commit()

@@ -5,7 +5,7 @@ from osirisvalidator.internet import valid_email
 
 from app.configs.database import db
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.exc import lawyer_exception
+from app.exc import exceptions
 
 import re
 from dataclasses import dataclass
@@ -62,7 +62,7 @@ class LawyerModel(db.Model):
         pattern = "(^\d{3}\.\d{3}\.\d{3}\-\d{2}$)"
 
         if not re.search(pattern, cpf):
-            raise lawyer_exception.CpfFormatException(
+            raise exceptions.CpfFormatException(
                 "CPF format is not valid. CPF must be like xxx.xxx.xxx-xx"
             )
         return cpf
@@ -70,7 +70,7 @@ class LawyerModel(db.Model):
     @validates('oab', 'name', 'last_name')
     def validate_oab_name_last_name(self, key, value):
         if type(value) != str:
-            raise lawyer_exception.OabNameLastNameException(
+            raise exceptions.OabNameLastNameException(
                 "'oab', 'name' and 'last_name' must be a string type."
             )
         return value
