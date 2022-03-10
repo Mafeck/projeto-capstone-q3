@@ -10,6 +10,7 @@ from app.models.lawyer_model import LawyerModel
 from app.models.lawyers_phone_number_model import LawyersPhoneNumber
 from app.models.client_comments_model import ClientCommentsModel
 from app.models.client_model import ClientModel
+from app.models.clients_comments_table import clients_comments_table
 
 
 from http import HTTPStatus
@@ -56,27 +57,35 @@ def create_comments():
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
-"""
+
+
+
 #@jwt_required()
-def update_comments():
-    user_data = request.get_json()
-    logged_user = get_jwt_identity()
+def update_comments(id): #não dá pra atualizar pelo cpf porque o cliente pode ter vários comentários. Vai ter que ser pelo id do comentário mesmo
+    comment_data = request.get_json()
 
     try:
-        user_to_update = LawyerModel.query.filter_by(email=logged_user["email"]).first()
+        comment = comment_data['comment']
+        #comment = ClientModel.query.filter_by(cpf=cpf).first()
+        #found = clients_comments_table.query.filter_by(client_cpf=cpf)
+        comment_to_update = ClientCommentsModel.query.filter_by(id=id).first()
+        if not comment_to_update:
+            return jsonify({"message": "Comment not found"}), HTTPStatus.NOT_FOUND
 
-        for key, value in user_data.items():
-            setattr(user_to_update, key, value)
-
-        db.session.add(user_to_update)
+        for key, value in comment_data.items():
+            setattr(comment_to_update, key, value)
+        
+        #seria legal colocar o updated_at mesmo pra sinalizar a data da última atualização 
+        db.session.add(comment_to_update)
         db.session.commit()
+        
+        return "", HTTPStatus.OK #segundo o canvas, quando a atualização é feita, não precisa de body na resposta
 
-        return jsonify(user_to_update), HTTPStatus.OK
+    except KeyError as e:
+        return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
-    except ValidationException:
-        return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST
-
-
+        
+"""
 #@jwt_required()
 def get_comments():
     client = ClientModel.query.filter_by(cpf=cpf).first()
