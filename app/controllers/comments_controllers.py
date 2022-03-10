@@ -5,10 +5,11 @@ from osirisvalidator.exceptions import ValidationException
 
 from app.configs.database import db
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.exc import lawyer_exception
+from app.exc import exceptions
 from app.models.lawyer_model import LawyerModel
 from app.models.lawyers_phone_number_model import LawyersPhoneNumber
 from app.models.client_comments_model import ClientCommentsModel
+
 
 from http import HTTPStatus
 
@@ -29,7 +30,7 @@ def create_comments():
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
-
+"""
 #@jwt_required()
 def update_comments():
     user_data = request.get_json()
@@ -52,11 +53,13 @@ def update_comments():
 
 #@jwt_required()
 def get_comments():
-    user = get_jwt_identity()
+    client = ClientModel.query.filter_by(cpf=cpf).first()
 
-    if not user:
-        return {"error": "User not found"}, HTTPStatus.NOT_FOUND
-    return jsonify(user), HTTPStatus.OK
+    if not client:
+        return {"error": "Client not found"}, HTTPStatus.NOT_FOUND
+
+    return jsonify(client), HTTPStatus.OK
+
 
 
 #@jwt_required()
@@ -79,3 +82,4 @@ def remove_comments():
 
     return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK
 
+"""
