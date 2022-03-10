@@ -4,3 +4,7 @@ class CpfFormatException(Exception):
 
 class OabNameLastNameException(Exception):
     pass
+
+
+class TypeException(Exception):
+    pass
