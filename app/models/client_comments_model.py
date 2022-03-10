@@ -13,20 +13,16 @@ class ClientCommentsModel(db.Model):
     id: int
     comment: str
     create_date: str
-
+    update_at: str
 
     __tablename__ = "client_comments"
     
     id = Column(Integer, primary_key=True)
     comment = Column(String, nullable=False)
+    title = Column(String, default='Title', nullable=False)
     create_date = Column(DateTime, default=datetime.now(), nullable=False)
+    update_at = Column(DateTime, default=datetime.now(), nullable=False)
     
     clients = relationship(
-        "ClientModel",
-        secondary=clients_comments_table,
-        backref="comments"
+        "ClientModel", secondary=clients_comments_table, backref="comments"
     )
-
-    #comments_rel = relationship(
-    #    'ClientModel', backref=backref('client_comments', uselist=True), uselist=False
-    #    )
