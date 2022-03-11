@@ -23,3 +23,4 @@ def init_app(app: Flask):
     from app.models.lawyers_clients_table import lawyers_clients_table
     from app.models.client_comments_model import ClientCommentsModel
     from app.models.clients_comments_table import clients_comments_table
+    from app.models.clients_process_table import clients_processes_table

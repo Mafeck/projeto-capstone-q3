@@ -122,6 +122,7 @@ def create_user():
     except TypeError as e:
         return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
+
 def login_user():
     data = request.get_json()
 
@@ -183,7 +184,6 @@ def remove_user():
 
     user_to_delete = LawyerModel.query.filter_by(email=logged_user["email"]).first()
     phone_to_delete = LawyersPhoneNumber.query.filter_by(lawyer_oab=logged_user['oab']).all()
-    address_to_delete = LawyersAddressModel.query.filter_by(id=user_to_delete.address_id).first()
    
     for phone in phone_to_delete:
         db.session.delete(phone)    
@@ -191,8 +191,5 @@ def remove_user():
 
     db.session.delete(user_to_delete)
     db.session.commit()
-
-    # db.session.delete(address_to_delete)
-    # db.session.commit()
 
     return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK

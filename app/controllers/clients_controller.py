@@ -11,7 +11,6 @@ from app.models.clients_process_table import clients_processes_table
 from app.configs.database import db
 from app.exc import exceptions
 from app.models.lawyer_model import LawyerModel
-from app.models.lawyers_clients_table import lawyers_clients_table
 
 from http import HTTPStatus
 
@@ -74,22 +73,27 @@ def remove_client(client_cpf):
     client = ClientModel.query.filter_by(cpf=client_cpf).first()
     phone_numbers = ClientsPhoneModel.query.filter_by(client_cpf=client_cpf).all()
 
-    # for phone in phone_numbers:
-    #     db.session.delete(phone)
-    #     db.session.commit()
+    if not client:
+        return {"error": "Client not found"}, HTTPStatus.NOT_FOUND
+
+    for phone in phone_numbers:
+        db.session.delete(phone)
 
     comments = client.comments
     processes = client.processes
-    print(processes)
+    print(comments, processes)
+    for comment in comments:
+        db.session.query(clients_comments_table).filter_by(comment_id=comment.id, client_cpf=client_cpf).delete()
 
-    # for comment in comments:
-    #     db.query(clients_comments_table).filter_by(comment_id=comment.id, client_cpf=client_cpf).delete()
-    #
-    # for process in processes:
-    #     db.query(clients_processes_table).filter_by(process_number=process.number, client_cpf=client_cpf).delete()
+        db.session.commit()
 
-    # db.session.delete(client)
-    # db.session.commit()
+    for process in processes:
+        db.session.query(clients_processes_table).filter_by(number=process.number, client_cpf=client_cpf).delete()
+
+        db.session.commit()
+
+    db.session.delete(client)
+    db.session.commit()
 
     return "", HTTPStatus.NO_CONTENT
 

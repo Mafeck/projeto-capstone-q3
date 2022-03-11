@@ -30,9 +30,6 @@ def create_comments():
 
             found_client.comments.append(comment_to_create)
 
-            print(comment_to_create.clients)
-            print(found_client.comments)
-
         db.session.add(comment_to_create)
         db.session.commit()
 

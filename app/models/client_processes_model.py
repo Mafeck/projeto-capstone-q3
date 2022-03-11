@@ -1,10 +1,11 @@
 from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from app.models.clients_process_table import clients_processes_table
 
 from app.configs.database import db
 
 from dataclasses import dataclass
+
 
 @dataclass
 class ClientProcessesModel(db.Model):
@@ -18,7 +19,5 @@ class ClientProcessesModel(db.Model):
     description = Column(String, nullable=False)
 
     clients = relationship(
-        "ClientModel",
-        secondary=clients_processes_table,
-        backref="processes"
+        "ClientModel", secondary=clients_processes_table, backref="processes"
     )
