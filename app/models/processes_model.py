@@ -10,11 +10,11 @@ class ProcessesModel(db.Model):
     
     __tablename__ = "processes"
     
-    id: int
+    # id: int
     number: int
     description: str
     
-    id = Column(Integer, primary_key=True)
-    number = Column(Integer, nullable=False)
+    # id = Column(Integer, primary_key=True)
+    number = Column(Integer, primary_key=True)
     description = Column(String, nullable=False)
 

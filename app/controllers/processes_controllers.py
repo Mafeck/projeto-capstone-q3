@@ -17,34 +17,83 @@ def create_process():
 
         all_proccess = ProcessesModel.query.all()
 
+        proccess = ProcessesModel(**data)
+        
+        keys = ['number', 'description']
 
-        # if process_number not in all_proccess:
-        #     proccess = ProcessesModel(process_number)
+        missing_keys = []
+
+        for key in keys:
+            if key not in data.keys():
+                missing_keys.append(key)
+
+        if len(missing_keys) > 0:
+            return {'error': f'missing keys: {missing_keys}'},HTTPStatus.BAD_REQUEST
+
+        db.session.add(proccess)
+
+        db.session.commit()
+
+        
+        
+        return jsonify({"msg":
+            proccess
+            }), HTTPStatus.CREATED
 
         # db.session.add(proccess)
         # db.session.commit()
 
         # data["id"] = proccess.id
 
-        # db.session.add(data)
-
-        # db.session.commit()
-
-        return jsonify({"msg":
-            data
-        }), HTTPStatus.CREATED
-
-    except KeyError as e:
-        return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
-
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
 # @jwt_required()
-# def get_process():
-#     process = ProcessesModel.query.filter_by().first()
+def get_all_process():
+    process = ProcessesModel.query.all()
 
-#     if not process:
-#         return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
+    if not process:
+        return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
 
-#     return jsonify(process), HTTPStatus.OK
+    return jsonify(process), HTTPStatus.OK
+
+#@jwt_required()
+def update_process(number_process): 
+    data = request.get_json()
+
+    try:
+        description = data['description']
+        
+        process_to_update = ProcessesModel.query.get(number_process)
+
+        if not process_to_update:
+            return jsonify({"message": "Process not found"}), HTTPStatus.NOT_FOUND
+
+        for key, value in data.items():
+            setattr(process_to_update, key, value)
+        
+        db.session.add(process_to_update)
+        db.session.commit()
+        
+        return "", HTTPStatus.OK 
+
+    except KeyError as e:
+        return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
+
+#@jwt_required()
+def get_process_by_number(number_process):
+    process = ProcessesModel.query.get(number_process)
+
+    if not process:
+        return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
+
+    return jsonify(process), HTTPStatus.OK
+
+#@jwt_required()
+def delete_process(number_process):
+    comment_to_delete = ProcessesModel.query.get(number_process)
+
+    db.session.delete(comment_to_delete)
+    db.session.commit()
+
+    return {"message": f"Comment has been deleted"}, HTTPStatus.OK
