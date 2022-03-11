@@ -8,6 +8,8 @@ from app.models.client_model import ClientModel
 from app.models.client_address_model import ClientAddressModel
 from app.models.clients_phone_number_model import ClientsPhoneModel
 from app.exc import exceptions
+from app.models.lawyer_model import LawyerModel
+from app.models.lawyers_clients_table import lawyers_clients_table
 
 from http import HTTPStatus
 
@@ -55,9 +57,11 @@ def get_client(cpf):
 
 @jwt_required()
 def get_all_clients():
-    clients = ClientModel.query.all()
+    logged_user = get_jwt_identity()
 
-    return jsonify({"clients": [*clients]}), HTTPStatus.OK
+    lawyer = LawyerModel.query.filter_by(oab=logged_user["oab"]).first()
+
+    return jsonify({"clients": [*lawyer.clients]}), HTTPStatus.OK
 
 
 @jwt_required()
@@ -133,9 +137,14 @@ def create_client():
 
             data["address_id"] = address.id
 
+        lawyer = LawyerModel.query.filter_by(email=logged_user["email"]).first()
+
         client = ClientModel(**data)
 
         client.password = password_to_hash
+
+        client.lawyers.append(lawyer)
+        db.session.add(client)
 
         all_phone_number = ClientsPhoneModel.query.all()
 
@@ -146,11 +155,9 @@ def create_client():
                 phone = ClientsPhoneModel(phone=phone, client_cpf=cpf)
 
                 db.session.add(phone)
-
             else:
                 return jsonify({"message": "Phone number already exists."}), HTTPStatus.CONFLICT
 
-        db.session.add(client)
         db.session.commit()
 
         return jsonify({

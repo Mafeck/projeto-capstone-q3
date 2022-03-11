@@ -32,8 +32,8 @@ class LawyerModel(db.Model):
     password_hash = Column(String(length=255), nullable=False)
     address_id = Column(Integer, ForeignKey("lawyers_address.id"), nullable=False)
 
-    lawyers_clients = relationship(
-        "LawyerModel", secondary="lawyers_clients_table", backref="lawyers"
+    clients = relationship(
+        "ClientModel", secondary="lawyers_clients_table", backref="lawyers"
     )
 
     address = relationship(
