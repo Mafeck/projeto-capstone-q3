@@ -119,6 +119,8 @@ def create_user():
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
 def login_user():
     data = request.get_json()
@@ -161,6 +163,9 @@ def update_user():
 
     except ValidationException:
         return jsonify({"error": "email key must be an email type like 'person@client.com'"}), HTTPStatus.BAD_REQUEST
+
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
 
 @jwt_required()

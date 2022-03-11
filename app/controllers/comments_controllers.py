@@ -57,7 +57,8 @@ def create_comments():
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
-
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
 
 #@jwt_required()
@@ -82,6 +83,9 @@ def update_comments(comment_id): #não dá pra atualizar pelo cpf porque o clien
 
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
+
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
 
 #@jwt_required()

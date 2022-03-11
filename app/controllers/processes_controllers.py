@@ -45,8 +45,15 @@ def create_process():
 
         # data["id"] = proccess.id
 
+
+    except KeyError as e:
+        return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST    
+
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
+
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
 # @jwt_required()
 def get_all_process():
@@ -80,6 +87,9 @@ def update_process(number_process):
     except KeyError as e:
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST   
+
 #@jwt_required()
 def get_process_by_number(number_process):
     process = ProcessesModel.query.get(number_process)
@@ -91,9 +101,10 @@ def get_process_by_number(number_process):
 
 #@jwt_required()
 def delete_process(number_process):
-    comment_to_delete = ProcessesModel.query.get(number_process)
-
-    db.session.delete(comment_to_delete)
+    process_to_delete = ProcessesModel.query.get(number_process)
+    if not process_to_delete:
+        return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
+    db.session.delete(process_to_delete)
     db.session.commit()
 
-    return {"message": f"Comment has been deleted"}, HTTPStatus.OK
+    return {"message": f"Process has been deleted"}, HTTPStatus.OK
