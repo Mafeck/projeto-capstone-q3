@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Integer, String, DateTime, Column
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from app.models.clients_comments_table import clients_comments_table
 
 from app.configs.database import db
