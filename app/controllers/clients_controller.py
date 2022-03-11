@@ -3,10 +3,12 @@ from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError
 from osirisvalidator.exceptions import ValidationException
 
-from app.configs.database import db
-from app.models.client_model import ClientModel
 from app.models.client_address_model import ClientAddressModel
+from app.models.client_model import ClientModel
 from app.models.clients_phone_number_model import ClientsPhoneModel
+from app.models.clients_comments_table import clients_comments_table
+from app.models.clients_process_table import clients_processes_table
+from app.configs.database import db
 from app.exc import exceptions
 from app.models.lawyer_model import LawyerModel
 from app.models.lawyers_clients_table import lawyers_clients_table
@@ -65,15 +67,28 @@ def get_all_clients():
 
 
 @jwt_required()
-def remove_client():
-    logged_client = get_jwt_identity()
-    client_to_delete = ClientModel.query.filter_by(email=logged_client["email"]).first()
-    name = client_to_delete.name
+def remove_client(client_cpf):
+    client = ClientModel.query.filter_by(cpf=client_cpf).first()
+    phone_numbers = ClientsPhoneModel.query.filter_by(client_cpf=client_cpf).all()
 
-    # db.session.delete(client_to_delete)
+    # for phone in phone_numbers:
+    #     db.session.delete(phone)
+    #     db.session.commit()
+
+    comments = client.comments
+    processes = client.processes
+    print(processes)
+
+    # for comment in comments:
+    #     db.query(clients_comments_table).filter_by(comment_id=comment.id, client_cpf=client_cpf).delete()
+    #
+    # for process in processes:
+    #     db.query(clients_processes_table).filter_by(process_number=process.number, client_cpf=client_cpf).delete()
+
+    # db.session.delete(client)
     # db.session.commit()
 
-    return {"message": f"Client {name} has been deleted"}, HTTPStatus.OK
+    return "", HTTPStatus.NO_CONTENT
 
 
 @jwt_required()
