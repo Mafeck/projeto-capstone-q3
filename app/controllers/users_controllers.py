@@ -192,7 +192,7 @@ def remove_user():
     db.session.delete(user_to_delete)
     db.session.commit()
 
-    db.session.delete(address_to_delete)
-    db.session.commit()
+    # db.session.delete(address_to_delete)
+    # db.session.commit()
 
     return {"message": f"User {logged_user['name']} has been deleted"}, HTTPStatus.OK

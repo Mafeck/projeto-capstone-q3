@@ -9,7 +9,6 @@ from app.exc import exceptions
 
 import re
 from dataclasses import dataclass
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 @dataclass

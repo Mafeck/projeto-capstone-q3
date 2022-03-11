@@ -4,7 +4,7 @@ from flask import request, jsonify
 
 from app.configs.database import db
 from app.models.lawyers_address_model import LawyersAddressModel
-from app.models.processes_model import ProcessesModel
+from app.models.client_processes_model import ClientProcessesModel
 
 from http import HTTPStatus
 
@@ -15,9 +15,9 @@ def create_process():
     try:
         process_number = data['number']
 
-        all_proccess = ProcessesModel.query.all()
+        all_proccess = ClientProcessesModel.query.all()
 
-        proccess = ProcessesModel(**data)
+        proccess = ClientProcessesModel(**data)
         
         keys = ['number', 'description']
 
@@ -57,7 +57,7 @@ def create_process():
 
 # @jwt_required()
 def get_all_process():
-    process = ProcessesModel.query.all()
+    process = ClientProcessesModel.query.all()
 
     if not process:
         return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
@@ -71,7 +71,7 @@ def update_process(number_process):
     try:
         description = data['description']
         
-        process_to_update = ProcessesModel.query.get(number_process)
+        process_to_update = ClientProcessesModel.query.get(number_process)
 
         if not process_to_update:
             return jsonify({"message": "Process not found"}), HTTPStatus.NOT_FOUND
@@ -92,7 +92,7 @@ def update_process(number_process):
 
 #@jwt_required()
 def get_process_by_number(number_process):
-    process = ProcessesModel.query.get(number_process)
+    process = ClientProcessesModel.query.get(number_process)
 
     if not process:
         return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
@@ -101,7 +101,7 @@ def get_process_by_number(number_process):
 
 #@jwt_required()
 def delete_process(number_process):
-    process_to_delete = ProcessesModel.query.get(number_process)
+    process_to_delete = ClientProcessesModel.query.get(number_process)
     if not process_to_delete:
         return {"error": "Process not found"}, HTTPStatus.NOT_FOUND
     db.session.delete(process_to_delete)
