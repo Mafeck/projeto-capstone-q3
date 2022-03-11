@@ -46,6 +46,9 @@ def update_client(cpf):
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
+
 
 @jwt_required()
 def get_client(cpf):
@@ -198,3 +201,6 @@ def create_client():
 
     except IntegrityError:
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
+
+    except TypeError as e:
+        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
