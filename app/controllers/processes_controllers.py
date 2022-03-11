@@ -8,7 +8,7 @@ from app.models.client_processes_model import ClientProcessesModel
 
 from http import HTTPStatus
 
-
+@jwt_required()
 def create_process():
     data = request.get_json()
 
@@ -36,9 +36,7 @@ def create_process():
 
         
         
-        return jsonify({"msg":
-            proccess
-            }), HTTPStatus.CREATED
+        return jsonify(proccess), HTTPStatus.CREATED
 
         # db.session.add(proccess)
         # db.session.commit()
@@ -53,9 +51,9 @@ def create_process():
         return {"error": "Something went wrong"}, HTTPStatus.BAD_REQUEST
 
     except TypeError as e:
-        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST
+        return {'error': f'{e}'}, HTTPStatus.BAD_REQUEST
 
-# @jwt_required()
+@jwt_required()
 def get_all_process():
     process = ClientProcessesModel.query.all()
 
@@ -64,7 +62,7 @@ def get_all_process():
 
     return jsonify(process), HTTPStatus.OK
 
-#@jwt_required()
+@jwt_required()
 def update_process(number_process): 
     data = request.get_json()
 
@@ -88,9 +86,9 @@ def update_process(number_process):
         return {"error": f"Key {e} is missing."}, HTTPStatus.BAD_REQUEST
 
     except TypeError as e:
-        return {'Error': f'{e}'}, HTTPStatus.BAD_REQUEST   
+        return {'error': f'{e}'}, HTTPStatus.BAD_REQUEST   
 
-#@jwt_required()
+@jwt_required()
 def get_process_by_number(number_process):
     process = ClientProcessesModel.query.get(number_process)
 
@@ -99,7 +97,7 @@ def get_process_by_number(number_process):
 
     return jsonify(process), HTTPStatus.OK
 
-#@jwt_required()
+@jwt_required()
 def delete_process(number_process):
     process_to_delete = ClientProcessesModel.query.get(number_process)
     if not process_to_delete:
@@ -107,4 +105,4 @@ def delete_process(number_process):
     db.session.delete(process_to_delete)
     db.session.commit()
 
-    return {"message": f"Process has been deleted"}, HTTPStatus.OK
+    return "", HTTPStatus.NO_CONTENT
